@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Foodie - Premium Food Delivery</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+    <!-- LOGIN MODAL -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeLogin">&times;</span>
+        <h2>Login</h2>
+
+        <input type="email" id="loginEmail" placeholder="Enter Email">
+        <input type="password" id="loginPassword" placeholder="Enter Password">
+
+        <button onclick="handleLogin()">Login</button>
+    </div>
+</div>
+<!-- ===== HEADER ===== -->
+<header class="header">
+    <div class="header-left">
+        <h2 class="logo">My Foodie</h2>
+    </div>
+    
+    <nav class="nav-menu">
+        <a href="#home">Home</a>
+        <a href="#products">Products</a>
+        <a href="#my-orders">My Orders</a>
+        <a href="#wishlist">Wishlist</a>
+    </nav>
+
+    <div class="header-right">
+        <a href="#cart" class="cart-link">
+            Cart
+            <span id="cartCount" class="cart-count">0</span>
+        </a>
+        <button class="filter-btn" onclick="openFilterModal()" title="Open Filters">Filters</button>
+        <div class="auth-section">
+                <button id="loginBtn" class="btn-login" onclick="openLoginModal()">Login</button>
+            <button id="logoutBtn" class="btn-logout" style="display:none;">Logout</button>
+        </div>
+    </div>
+</header>
+
+<!-- ===== FILTER MODAL ===== -->
+<div id="filterModal" class="filter-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Filters</h2>
+            <button class="close-btn" onclick="closeFilterModal()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <!-- VEG/NON-VEG BUTTONS -->
+            <div class="filter-group">
+                <label>Type:</label>
+                <div class="type-buttons">
+                    <button class="type-btn active" onclick="filterByType('all', this)">All Items</button>
+                    <button class="type-btn" onclick="filterByType('veg', this)">Vegetarian</button>
+                    <button class="type-btn" onclick="filterByType('non-veg', this)">Non-Vegetarian</button>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- FILTER BY PRICE -->
+            <div class="filter-group">
+                <label>Price Range:</label>
+                <div class="price-filter">
+                    <input type="range" id="priceSlider" min="50" max="400" value="400" onchange="filterByPrice(50, this.value)" class="slider">
+                    <span id="priceDisplay">₹999</span>
+                </div>
+            </div>
+
+           
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeFilterModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== LOGIN MODAL ===== -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeLogin">&times;</span>
+        <h2>Login</h2>
+
+        <input type="email" id="loginEmail" placeholder="Enter Email">
+        <input type="password" id="loginPassword" placeholder="Enter Password">
+
+        <button onclick="handleLogin()">Login</button>
+    </div>
+</div>
+<div class="container">
+
+<!-- ===== HOME SECTION ===== -->
+<section id="home" class="section home">
+    <h1 style="color: blueviolet; font-size: 68px;">Welcome to My Foodie</h1>
+
+    <!-- SEARCH BAR -->
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search by food name..." class="search-input">
+        <button onclick="handleSearch()" class="search-btn">Search</button>
+    </div>
+</section>
+
+<!-- ===== PRODUCTS SECTION ===== -->
+    <section id="products" class="section products">
+    <h1 style="color: blueviolet;">Our Delicious Menu</h1>
+    <div id="productList" class="product-grid"></div>
+    </section>
+
+<!-- ===== CART SECTION ===== -->
+<section id="cart" class="section cart">
+    <div class="cart-header" style="width:100%; display:flex; align-items:center; justify-content:space-between; max-width:1100px;">
+        <h1 style="color: blueviolet; ">Your Cart</h1>
+        <div id="cartGreeting" class="cart-greeting">Hi, Guest</div>
+    </div>
+    
+    <div id="emptyCartMsg" class="empty-message">
+        <p>Your cart is empty!</p>
+        <button onclick="location.href='#products'" class="btn-primary">Continue Shopping</button>
+    </div>
+
+    <div id="cartContent" class="cart-content" style="display:none; width:100%; max-width:1100px; display:flex; gap:30px; align-items:flex-start;">
+        <div id="cartItems" class="cart-items" style="flex:1;"></div>
+        
+        <div class="cart-summary" style="width:320px;">
+            <div class="promo-row" style="display:flex; gap:8px; margin-bottom:12px;">
+                <input id="promoCode" type="text" placeholder="Promo code (e.g. MYFOOD10)" class="promo-input" />
+                <button class="btn-secondary" onclick="applyPromoCode()">Apply</button>
+            </div>
+            <div id="promoMessage" class="promo-message" style="color:var(--success); margin-bottom:12px; min-height:18px;"></div>
+
+            <div class="summary-row">
+                <span>Subtotal:</span>
+                <span id="subtotal">₹0</span>
+            </div>
+            <div class="summary-row">
+                <span>Delivery Fee:</span>
+                <span id="deliveryFee">₹40</span>
+            </div>
+            <div class="summary-row total">
+                <span>Total:</span>
+                <span id="cartTotal">₹0</span>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button onclick="goToPayment()" class="btn-primary btn-large" style="flex:1;">Proceed to Payment →</button>
+            </div>
+            <button onclick="location.href='#products'" class="btn-secondary" style="margin-top:12px; width:100%;">Continue Shopping</button>
+        </div>
+    </div>
+</section>
+
+<!-- ===== PAYMENT SECTION ===== -->
+<section id="payment" class="section payment">
+    <h1 style="color: blueviolet;">Payment</h1>
+    
+    <div id="paymentForm" class="payment-container">
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <div id="paymentItems"></div>
+            <div class="summary-row total">
+                <span>Total Amount:</span>
+                <span id="paymentTotal">₹0</span>
+            </div>
+        </div>
+
+        <div class="payment-methods">
+            <h2 style="color: blueviolet;">Select Payment Method</h2>
+            
+            <!-- Credit Card -->
+            <div class="payment-option">
+                <input type="radio" id="cardPayment" name="payment" value="card" checked>
+                <label for="cardPayment">Credit/Debit Card</label>
+            </div>
+            <div id="cardForm" class="payment-details">
+                <input type="text" id="cardNumber" placeholder="Card Number (16 digits)" maxlength="16" class="input-field">
+                <div class="row">
+                    <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" class="input-field">
+                    <input type="text" id="cardCVV" placeholder="CVV" maxlength="3" class="input-field">
+                </div>
+                <input type="text" id="cardName" placeholder="Cardholder Name" class="input-field">
+            </div>
+
+            <!-- UPI -->
+            <div class="payment-option">
+                <input type="radio" id="upiPayment" name="payment" value="upi">
+                <label for="upiPayment">UPI</label>
+            </div>
+            <div id="upiForm" class="payment-details" style="display:none;">
+                <input type="text" id="upiId" placeholder="Enter UPI ID (email@upi)" class="input-field">
+            </div>
+
+            <!-- COD -->
+            <div class="payment-option">
+                <input type="radio" id="codPayment" name="payment" value="cod">
+                <label for="codPayment">Cash on Delivery</label>
+            </div>
+
+            <button onclick="processPayment()" class="btn-primary btn-large">Pay Now</button>
+            <button onclick="location.href='#cart'" class="btn-secondary">Back to Cart</button>
+        </div>
+    </div>
+
+    <!-- Payment Success -->
+    <div id="paymentSuccess" class="success-screen" style="display:none;">
+        <div class="success-box">
+            <div class="success-icon">Success</div>
+            <h2>Payment Successful!</h2>
+            <p>Order #<span id="orderId"></span></p>
+            <p>Delivery in 30 minutes</p>
+            <div class="success-actions">
+                <button onclick="location.href='#my-orders'" class="btn-primary">View Order Details</button>
+                <button onclick="location.href='#products'" class="btn-secondary">Continue Shopping</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== ORDER HISTORY SECTION ===== -->
+<section id="my-orders" class="section my-orders">
+    <h1 style="color: rgb(127, 5, 240);">My Orders</h1>
+    
+    <div id="emptyOrders" class="empty-message">
+        <p>No orders yet!</p>
+        <button onclick="location.href='#products'" class="btn-primary">Start Shopping</button>
+    </div>
+
+    <div id="ordersList" class="orders-list"></div>
+</section>
+
+<!-- ===== WISHLIST SECTION ===== -->
+<section id="wishlist" class="section wishlist">
+    <h1 style="color: blueviolet;">My Wishlist</h1>
+    
+    <div id="emptyWishlist" class="empty-message">
+        <p>Your wishlist is empty!</p>
+        <p>Here are our top rated products - add them to your wishlist:</p>
+    </div>
+
+    <!-- Recommended Products when wishlist is empty -->
+    <h2 id="recommendedTitle" style="text-align: center; margin-bottom: 30px; display: none;">Recommended For You</h2>
+    <div id="recommendedProducts" class="product-grid" style="display: none;"></div>
+
+    <!-- Wishlist Items -->
+    <div id="wishlistItems" class="product-grid"></div>
+</section>
+
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>About My Foodie</h3>
+            <p>Order delicious food anytime, delivered fresh to your doorstep in 30 minutes!</p>
+        </div>
+        <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#products">Products</a></li>
+                <li><a href="#my-orders">Orders</a></li>
+                <li><a href="#login">Account</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Contact</h3>
+            <p>support@myfoodie.com</p>
+            <p>+91-9783939240</p>
+            <p>9 AM - 10 PM</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 My Foodie. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast"></div>
+
+<!-- Loading Spinner -->
+<div id="loadingSpinner" class="loading-spinner"></div>
+
+<script src="index.js"></script>
+</body>
+</html>
